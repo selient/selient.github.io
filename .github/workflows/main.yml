@@ -5,14 +5,11 @@ on:
     branches:
       - main
 
+permissions: write-all
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-      pull-requests: write
-      actions: write
 
     steps:
       - name: Checkout
