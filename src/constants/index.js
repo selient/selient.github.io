@@ -20,7 +20,13 @@ const initialGame = {
   price: 0,
   timeLeft: 60 * 1000, // 60 seconds
   pendingPayment: initialPayment,
+  paymentMade: {
+    time: null,
+    score: null,
+    combo: null
+  },
   score: 0,
+  combo: 0
 };
 
 const defaultCoins = {
@@ -45,14 +51,17 @@ const paymentResultMap = {
   good: {
     score: 1,
     time: 1 * 1000,
+    combo: 1
   },
   great: {
     score: 2,
     time: 2 * 1000,
+    combo: 1
   },
   perfect: {
     score: 3,
     time: 15 * 1000,
+    combo: 1
   },
 };
 

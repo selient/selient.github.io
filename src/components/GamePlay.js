@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../style/index.module.css';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 import {
   formatTime,
   getChangeBreakdown,
   generateIntBetween,
   sumCoinsToAmount,
+  generateExactPayableAmountFromWallet
 } from '../utils';
 import {
   coinTypes,
@@ -15,6 +16,9 @@ import {
   paymentResultMap,
   initialWallet,
 } from '../constants';
+import styles from '../style/index.module.css';
+import 'react-notifications/lib/notifications.css';
+
 
 function GamePlay() {
   const [wallet, setWallet] = useState(initialWallet);
@@ -96,21 +100,35 @@ function GamePlay() {
     return true;
   };
 
-  const topUpWallet = () => {
-    const added = Math.floor((5000 - wallet.amount) / 1000);
-    setWallet((prevWallet) => {
-      const updatedCoins = {
-        ...prevWallet.coins,
-        1000: prevWallet.coins[1000] + added,
-      };
-      const updatedAmount = prevWallet.amount + 1000 * added;
+  const topUpWallet = (coins, amount) => {
+    const added = Math.floor((5000 - amount) / 1000);
+    const nextCoins = {
+      ...coins,
+      [1000]: coins[1000] + added
+    };
+    const nextAmount = sumCoinsToAmount(nextCoins);
 
-      return {
-        ...prevWallet,
-        coins: updatedCoins,
-        amount: updatedAmount,
-      };
-    });
+    return { nextCoins, nextAmount }
+  };
+
+  const handleNotification = (type, millisecond, title, ttl) => {
+    const timeString = `${millisecond > 0 ? '+' : ''}${millisecond / 1000} s`;
+    return () => {
+      switch (type) {
+        case 'info':
+          NotificationManager.info(timeString, title, ttl);
+          break;
+        case 'success':
+          NotificationManager.success(timeString, title, ttl);
+          break;
+        case 'warning':
+          NotificationManager.warning(timeString, title, ttl);
+          break;
+        case 'error':
+          NotificationManager.error(timeString, title, ttl);
+          break;
+      }
+    };
   };
 
   const handlePaymentResult = (returnCoins) => {
@@ -128,21 +146,23 @@ function GamePlay() {
 
     const isPerfectPayment = sumCoinsToAmount(returnCoins) === 0;
 
-    let result = null;
-
-    // TODO: combo
+    let type = null;
 
     if (isMissedPayment) {
-      result = 'missed';
+      type = 'missed';
+      handleNotification('error', paymentResultMap[type].time, 'Missed!', 1000)();
     } else if (isPerfectPayment) {
-      result = 'perfect';
+      type = 'perfect';
+      handleNotification('success', paymentResultMap[type].time, 'Perfect!', 1000)();
     } else if (isGreatPayment) {
-      result = 'great';
+      type = 'great';
+      handleNotification('info', paymentResultMap[type].time, 'Great!', 1000)();
     } else if (!isGreatPayment) {
-      result = 'good';
+      type = 'good';
+      handleNotification('warning', paymentResultMap[type].time, 'Good!', 1000)();
     }
 
-    return paymentResultMap[result];
+    return paymentResultMap[type];
   };
 
   const handleChange = (g) => {
@@ -159,31 +179,35 @@ function GamePlay() {
 
     const returnCoins = getChangeBreakdown(coinTypes, game.price, game.pendingPayment.amount);
 
-    Object.keys(returnCoins).forEach((key) => {
-      const denomination = Number(key);
+    let nextCoins = Object.keys(wallet.coins).reduce((acc, cur) => {
+      const denomination = Number(cur);
+      return {
+        ...acc,
+        [denomination]: wallet.coins[denomination] + (returnCoins[denomination] || 0),
+      }
+    }, {});
 
-      setWallet((prevWallet) => ({
-        ...prevWallet,
-        coins: {
-          ...prevWallet.coins,
-          [denomination]: prevWallet.coins[denomination] + returnCoins[denomination],
-        },
-        amount: prevWallet.amount + (denomination * returnCoins[denomination]),
-      }));
-    });
+    let nextAmount = sumCoinsToAmount(nextCoins);
 
-    if (wallet.amount < 5000) {
-      topUpWallet();
+    if (nextAmount < 5000) {
+      ({ nextCoins, nextAmount } = topUpWallet(nextCoins, nextAmount));
     }
-    const nextPrice = generateIntBetween(0, 5000);
-    // let nextPrice = null;
-    // if (Math.random() < 0.3) {
-    //   nextPrice = generateExactPayableAmountFromWallet(wallet.coins);
-    // } else {
-    //   nextPrice = generateRandomAmount(wallet.amount);
-    // }
 
-    const { score, time: timeAdjust } = handlePaymentResult(returnCoins);
+    setWallet((prevWallet) => ({
+      ...prevWallet,
+      coins: nextCoins,
+      amount: nextAmount,
+    }));
+
+
+    let nextPrice = null;
+    if (Math.random() < 0.3) {
+      nextPrice = generateExactPayableAmountFromWallet(nextCoins);
+    } else {
+      nextPrice = generateIntBetween(100, wallet.amount);
+    }
+
+    const { score, time: timeAdjust, combo } = handlePaymentResult(returnCoins);
 
     setGame((prevGame) => ({
       ...prevGame,
@@ -191,8 +215,13 @@ function GamePlay() {
       pendingPayment: initialPayment,
       score: prevGame.score + score,
       timeLeft: prevGame.timeLeft + timeAdjust,
+      combo: combo ? prevGame.combo + combo : 0,
+      paymentMade: {
+        time: timeAdjust,
+        combo,
+        score,
+      }
     }));
-
     return true;
   };
 
@@ -209,6 +238,10 @@ function GamePlay() {
             <h3>Score</h3>
             <div>{game.score}</div>
           </div>
+          <div>
+            <h3>Combo</h3>
+            <div>{game.combo}</div>
+          </div>
         </section>
         <section className={styles.flexContainer}>
           <div>
@@ -223,19 +256,17 @@ function GamePlay() {
               {game.pendingPayment.amount}
             </p>
           </div>
-          <div>
-            <h3>Change</h3>
-            <p>
-              {handleChange(game)}
-            </p>
-          </div>
+          {/* <div>
+            {handleChange(game)}
+          </div> */}
         </section>
 
         <h2>Pending Payment</h2>
         <div className={styles.coinContainer}>
           {Object.keys(game.pendingPayment.coins).map((key) => (
             <button type="button" className={styles.coinItem} key={key} onClick={() => handlePaymentClick(key)}>
-              {`${key} yen: ${game.pendingPayment.coins[key]}`}
+              <span className={styles.coinButtonText}>{`${key}`}</span>
+              <span className={styles.coinButtonText}>{`${game.pendingPayment.coins[key]}`}</span>
             </button>
           ))}
         </div>
@@ -246,16 +277,15 @@ function GamePlay() {
         <div className={styles.coinContainer}>
           {Object.keys(wallet.coins).map((key) => (
             <button type="button" className={styles.coinItem} key={key} onClick={() => handleCoinClick(key)}>
-              <span className={styles.coinButtonText}>{`${key} yen`}</span>
+              <span className={styles.coinButtonText}>{`${key}`}</span>
               <span className={styles.coinButtonText}>{`${wallet.coins[key]}`}</span>
             </button>
           ))}
         </div>
-        {/* <h3>Amount</h3>
-        <p>{wallet.amount}</p> */}
-      </div>
+        <NotificationContainer />
+      </div >
 
-    </div>
+    </div >
   );
 }
 

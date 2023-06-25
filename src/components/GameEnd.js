@@ -17,8 +17,7 @@ function GameEnd() {
     <div>
       <h1>Game Over</h1>
       <p>
-        Score:
-        {score}
+        Score: {score}
       </p>
       <p>Thanks for playing!</p>
 
