@@ -10,7 +10,7 @@
     "deploy": "gh-pages -d dist"
   },
   "repository": {
-    "url": "git+https://github.com/selient/selient.git"
+    "url": "git+https://github.com/selient/selient.github.io.git"
   },
   "keywords": [],
   "author": "",
