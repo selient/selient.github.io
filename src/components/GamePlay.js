@@ -6,7 +6,8 @@ import {
   getChangeBreakdown,
   generateIntBetween,
   sumCoinsToAmount,
-  generateExactPayableAmountFromWallet
+  generateExactPayableAmountFromWallet,
+  countCoins,
 } from '../utils';
 import {
   coinTypes,
@@ -135,12 +136,18 @@ function GamePlay() {
   const handlePaymentResult = (returnCoins) => {
     let isGreatPayment = true;
 
-    Object.keys(returnCoins).forEach((key) => {
+    const nextCoins = Object.keys(returnCoins).reduce((acc, key) => {
       const denomination = Number(key);
       if (wallet.coins[denomination] + returnCoins[denomination] > defaultCoins[denomination]) {
         isGreatPayment = false;
       }
-    });
+      return {
+        ...acc,
+        [denomination]: wallet.coins[denomination] + returnCoins[denomination]
+      }
+    }, {});
+
+    const isOverCoinPayment = countCoins(nextCoins) > game.walletSize;
 
     const isMissedPayment = !!Object.keys(returnCoins)
       .find((key) => game.pendingPayment.coins[key] > 0);
@@ -152,6 +159,9 @@ function GamePlay() {
     if (isMissedPayment) {
       type = 'missed';
       handleNotification('error', paymentResultMap[type].time, 'Missed!', 1000)();
+    } else if (isOverCoinPayment) {
+      type = 'excessive';
+      handleNotification('error', paymentResultMap[type].time, 'Excessive!', 1000)();
     } else if (isPerfectPayment) {
       type = 'perfect';
       handleNotification('success', paymentResultMap[type].time, 'Perfect!', 1000)();
@@ -166,12 +176,20 @@ function GamePlay() {
     return paymentResultMap[type];
   };
 
-  const handleChange = (g) => {
-    if (g.pendingPayment.amount < g.price) {
-      return '';
-    }
-    return g.pendingPayment.amount - g.price;
-  };
+  // const handleChange = (g) => {
+  //   if (g.pendingPayment.amount < g.price) {
+  //     return '';
+  //   }
+  //   return g.pendingPayment.amount - g.price;
+  // };
+
+  function scaleCombo(combo, max) {
+    const upper = Math.min(200 + combo * 100, max);
+    const base = generateIntBetween(100, upper);
+    const spread = generateIntBetween(5, 10)
+    const price = generateIntBetween(base - spread, base + spread);
+    return price;
+  }
 
   const handlePayment = () => {
     if (game.pendingPayment.amount < game.price) {
@@ -200,15 +218,16 @@ function GamePlay() {
       amount: nextAmount,
     }));
 
+    const { score, time: timeAdjust, combo } = handlePaymentResult(returnCoins);
+    const nextCombo = combo ? game.combo + combo : 0;
 
     let nextPrice = null;
     if (Math.random() < 0.1) {
-      nextPrice = generateExactPayableAmountFromWallet(nextCoins);
+      nextPrice = generateExactPayableAmountFromWallet(nextCoins, wallet.amount);
     } else {
-      nextPrice = generateIntBetween(100, wallet.amount);
+      nextPrice = scaleCombo(nextCombo, wallet.amount);
     }
 
-    const { score, time: timeAdjust, combo } = handlePaymentResult(returnCoins);
 
     setGame((prevGame) => ({
       ...prevGame,
@@ -216,7 +235,7 @@ function GamePlay() {
       pendingPayment: initialPayment,
       score: prevGame.score + score,
       timeLeft: prevGame.timeLeft + timeAdjust,
-      combo: combo ? prevGame.combo + combo : 0,
+      combo: nextCombo,
       maxCombo: prevGame.combo + combo > prevGame.maxCombo ? prevGame.combo + combo : prevGame.maxCombo,
       paymentMade: {
         time: timeAdjust,

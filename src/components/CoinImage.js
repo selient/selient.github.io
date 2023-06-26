@@ -49,7 +49,7 @@ function CoinImage({ coin, count, callback }) {
           zIndex: index + 1,
           position: 'absolute',
           margin: '0 auto',
-          height: '4rem',
+          height: '3rem',
         };
 
         return (

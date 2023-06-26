@@ -28,6 +28,7 @@ const initialGame = {
   score: 0,
   combo: 0,
   maxCombo: 0,
+  walletSize: 20,
 };
 
 const defaultCoins = {
@@ -41,13 +42,15 @@ const defaultCoins = {
 };
 
 const paymentResultMap = {
-  overCoin: {
-    score: 0,
+  excessive: {
+    score: -1,
     time: -10 * 1000,
+    combo: null // set to null to reset combo
   },
   missed: {
     score: -1,
     time: -15 * 1000,
+    combo: null // set to null to reset combo
   },
   good: {
     score: 1,

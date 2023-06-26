@@ -1,4 +1,7 @@
-
+h1, h2, h3, h4, h5, h6 {
+  margin-block-start: 0.2rem;
+  margin-block-end: 0.7rem;
+}
 
 body {
   color: #FFF;
@@ -52,16 +55,13 @@ body {
   justify-content: flex-start;
   align-items: flex-start;
   align-content: flex-start;
-  overflow: auto;
   flex-direction: row;
-  height: 11rem;
 }
 
 .flexContainer div {
   width: 30%;
-  height: 5rem;
-  margin: 0.1rem;
-  /* border: solid 0.1rem #fff; */
+  height: 4rem;
+  margin: 0.2rem;
 }
 
 .flexContainer span{
@@ -99,7 +99,7 @@ body {
 
 .imageContainer {
   position: relative;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 4rem;
+  height: 4rem;
   margin: 0.2rem;
 }

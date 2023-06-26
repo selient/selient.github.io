@@ -33,12 +33,24 @@ export function sumCoinsToAmount(coins) {
     .reduce((acc, key) => acc + (Number(key) * coins[key]), 0);
 }
 
+export function countCoins(coins) {
+  return Object.keys(coins)
+    .reduce((acc, key) => acc + coins[key], 0);
+}
+
 export function generateExactPayableAmountFromWallet(coins) {
   const nextCoins = Object.keys(coins).reduce((acc, cur) => {
     const key = Number(cur);
+    if (key === 1000 || key === 500) {
+      return acc
+    }
     acc[key] = generateIntBetween(0, coins[key]);
     return acc;
   }, {})
 
-  return sumCoinsToAmount(nextCoins);
+  const price = sumCoinsToAmount(nextCoins);
+  if (price === 0) {
+    return generateIntBetween(100, 300);
+  }
+  return price
 }
