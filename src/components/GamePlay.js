@@ -256,9 +256,9 @@ function GamePlay() {
               {game.pendingPayment.amount}
             </span>
           </div>
-          <div>
+          {/* <div>
             {game.maxCombo}
-          </div>
+          </div> */}
         </section>
 
         {/* <h2>Pending Payment</h2> */}
