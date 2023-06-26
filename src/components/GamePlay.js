@@ -202,7 +202,7 @@ function GamePlay() {
 
 
     let nextPrice = null;
-    if (Math.random() < 0.3) {
+    if (Math.random() < 0.1) {
       nextPrice = generateExactPayableAmountFromWallet(nextCoins);
     } else {
       nextPrice = generateIntBetween(100, wallet.amount);
