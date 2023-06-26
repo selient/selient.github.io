@@ -16,6 +16,7 @@ import {
   paymentResultMap,
   initialWallet,
 } from '../constants';
+import CoinImage from './CoinImage';
 import styles from '../style/index.module.css';
 import 'react-notifications/lib/notifications.css';
 
@@ -216,6 +217,7 @@ function GamePlay() {
       score: prevGame.score + score,
       timeLeft: prevGame.timeLeft + timeAdjust,
       combo: combo ? prevGame.combo + combo : 0,
+      maxCombo: prevGame.combo + combo > prevGame.maxCombo ? prevGame.combo + combo : prevGame.maxCombo,
       paymentMade: {
         time: timeAdjust,
         combo,
@@ -226,60 +228,52 @@ function GamePlay() {
   };
 
   return (
-    <div>
-      <h1>Coin Game</h1>
+    <div className={styles.main}>
+      {/* <h1>Coin Game</h1> */}
       <div>
         <section className={styles.flexContainer}>
           <div>
             <h3>Time</h3>
-            <p>{formatTime(game.timeLeft)}</p>
+            <span>{formatTime(game.timeLeft)}</span>
           </div>
           <div>
             <h3>Score</h3>
-            <div>{game.score}</div>
+            <span>{game.score}</span>
           </div>
           <div>
             <h3>Combo</h3>
-            <div>{game.combo}</div>
+            <span>{game.combo}</span>
           </div>
-        </section>
-        <section className={styles.flexContainer}>
           <div>
             <h3>Price</h3>
-            <p>
+            <span>
               {game.price}
-            </p>
+            </span>
           </div>
           <div>
             <h3>Amount</h3>
-            <p>
+            <span>
               {game.pendingPayment.amount}
-            </p>
+            </span>
           </div>
-          {/* <div>
-            {handleChange(game)}
-          </div> */}
+          <div>
+            {game.maxCombo}
+          </div>
         </section>
 
-        <h2>Pending Payment</h2>
+        {/* <h2>Pending Payment</h2> */}
         <div className={styles.coinContainer}>
           {Object.keys(game.pendingPayment.coins).map((key) => (
-            <button type="button" className={styles.coinItem} key={key} onClick={() => handlePaymentClick(key)}>
-              <span className={styles.coinButtonText}>{`${key}`}</span>
-              <span className={styles.coinButtonText}>{`${game.pendingPayment.coins[key]}`}</span>
-            </button>
+            <CoinImage coin={key} count={game.pendingPayment.coins[key]} key={key} callback={handlePaymentClick} />
           ))}
         </div>
 
         <button type="button" className={styles.payButton} onClick={handlePayment}>Pay!</button>
 
-        <h2>Wallet</h2>
+        {/* <h2>Wallet</h2> */}
         <div className={styles.coinContainer}>
           {Object.keys(wallet.coins).map((key) => (
-            <button type="button" className={styles.coinItem} key={key} onClick={() => handleCoinClick(key)}>
-              <span className={styles.coinButtonText}>{`${key}`}</span>
-              <span className={styles.coinButtonText}>{`${wallet.coins[key]}`}</span>
-            </button>
+            <CoinImage coin={key} count={wallet.coins[key]} key={key} callback={handleCoinClick} />
           ))}
         </div>
         <NotificationContainer />

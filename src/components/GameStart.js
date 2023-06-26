@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from '../style/index.module.css';
 
 function GameStart() {
   const navigate = useNavigate();
@@ -9,9 +10,9 @@ function GameStart() {
   };
 
   return (
-    <div>
-      <h1>Game Start</h1>
-      <button type="button" onClick={handleStartClick}>Start</button>
+    <div className={styles.main}>
+      <h1>Coin Game</h1>
+      <button type="button" className={styles.pageButton} onClick={handleStartClick}>Start</button>
     </div>
   );
 }

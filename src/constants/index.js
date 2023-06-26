@@ -26,7 +26,8 @@ const initialGame = {
     combo: null
   },
   score: 0,
-  combo: 0
+  combo: 0,
+  maxCombo: 0,
 };
 
 const defaultCoins = {
