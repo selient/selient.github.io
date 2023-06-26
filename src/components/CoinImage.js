@@ -55,7 +55,7 @@ function CoinImage({ coin, count, callback }) {
         return (
           <img
             key={`coin_${coinKey}_${index}`}
-            src={imageUrl}
+            src={`.${imageUrl}`}
             alt={`coin ${coinKey} ${index + 1}`}
             style={style} // Pass the dynamically generated inline style
             onClick={() => callback(coinKey)}

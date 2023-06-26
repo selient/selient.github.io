@@ -25,17 +25,23 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(jpg|png|svg)$/,
-        loader: 'file-loader',
-
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
       },
-      {
-        test: /\.(jpg|png|svg)$/,
-        loader: 'url-loader',
-        options: {
-          limit: 25000,
-        },
-      },
+      // {
+      //   test: /\.(jpg|png|svg)$/,
+      //   loader: 'file-loader',
+      //   options: {
+      //     outputPath: '/images/'
+      //   }
+      // },
+      // {
+      //   test: /\.(jpg|png|svg)$/,
+      //   loader: 'url-loader',
+      //   options: {
+      //     outputPath: '/images/'
+      //   }
+      // },
     ],
   },
   resolve: {
