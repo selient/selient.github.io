@@ -29,6 +29,7 @@ function GamePlay() {
 
   useEffect(() => {
     if (game.timeLeft <= 0) {
+      NotificationManager.removeAll()
       navigate('/end', { state: { game } });
     }
   }, [game, navigate]);
@@ -155,22 +156,23 @@ function GamePlay() {
     const isPerfectPayment = sumCoinsToAmount(returnCoins) === 0;
 
     let type = null;
+    let ttl = 15000;
 
     if (isMissedPayment) {
       type = 'missed';
-      handleNotification('error', paymentResultMap[type].time, 'Missed!', 1000)();
+      handleNotification('error', paymentResultMap[type].time, 'Missed!', ttl)();
     } else if (isOverCoinPayment) {
       type = 'excessive';
-      handleNotification('error', paymentResultMap[type].time, 'Excessive!', 1000)();
+      handleNotification('error', paymentResultMap[type].time, 'Excessive!', ttl)();
     } else if (isPerfectPayment) {
       type = 'perfect';
-      handleNotification('success', paymentResultMap[type].time, 'Perfect!', 1000)();
+      handleNotification('success', paymentResultMap[type].time, 'Perfect!', ttl)();
     } else if (isGreatPayment) {
       type = 'great';
-      handleNotification('info', paymentResultMap[type].time, 'Great!', 1000)();
+      handleNotification('info', paymentResultMap[type].time, 'Great!', ttl)();
     } else if (!isGreatPayment) {
       type = 'good';
-      handleNotification('warning', paymentResultMap[type].time, 'Good!', 1000)();
+      handleNotification('warning', paymentResultMap[type].time, 'Good!', ttl)();
     }
 
     return paymentResultMap[type];

@@ -1,7 +1,3 @@
-h1, h2, h3, h4, h5, h6 {
-  margin-block-start: 0.2rem;
-  margin-block-end: 0.7rem;
-}
 
 body {
   color: #FFF;
@@ -25,7 +21,9 @@ body {
 }
 
 .main > h1, h2, h3, h4, h5, h6 {
- color: #969696
+ color: #969696;
+ margin-block-start: 0.2rem;
+ margin-block-end: 0.7rem;
 }
 
 .coinContainer {
