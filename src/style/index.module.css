@@ -24,6 +24,10 @@ body {
   justify-content: center;
 }
 
+.main > h1, h2, h3, h4, h5, h6 {
+ color: #969696
+}
+
 .coinContainer {
   display: flex;
   flex-wrap: wrap;
