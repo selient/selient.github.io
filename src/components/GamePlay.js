@@ -169,9 +169,7 @@ function GamePlay() {
 
   function scaleCombo(combo, max) {
     const upper = Math.min(200 + combo * 100, max);
-    const base = generateIntBetween(100, upper);
-    const spread = generateIntBetween(5, 10)
-    const price = generateIntBetween(base - spread, base + spread);
+    const price = generateIntBetween(upper - 100, upper);
     return price;
   }
 

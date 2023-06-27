@@ -1,3 +1,5 @@
+import { NotificationManager } from 'react-notifications';
+
 export function formatTime(ms) {
   const minutes = Math.floor((ms / 1000 / 60) % 60).toString().padStart(2, '0');
   const seconds = Math.floor((ms / 1000) % 60).toString().padStart(2, '0');
@@ -57,21 +59,21 @@ export function generateExactPayableAmountFromWallet(coins) {
 
 
 export const handleNotification = (type, millisecond, title, ttl) => {
-    const timeString = `${millisecond > 0 ? '+' : ''}${millisecond / 1000} s`;
-    return () => {
-      switch (type) {
-        case 'info':
-          NotificationManager.info(timeString, title, ttl);
-          break;
-        case 'success':
-          NotificationManager.success(timeString, title, ttl);
-          break;
-        case 'warning':
-          NotificationManager.warning(timeString, title, ttl);
-          break;
-        case 'error':
-          NotificationManager.error(timeString, title, ttl);
-          break;
-      }
-    };
+  const timeString = `${millisecond > 0 ? '+' : ''}${millisecond / 1000} s`;
+  return () => {
+    switch (type) {
+      case 'info':
+        NotificationManager.info(timeString, title, ttl);
+        break;
+      case 'success':
+        NotificationManager.success(timeString, title, ttl);
+        break;
+      case 'warning':
+        NotificationManager.warning(timeString, title, ttl);
+        break;
+      case 'error':
+        NotificationManager.error(timeString, title, ttl);
+        break;
+    }
   };
+};
