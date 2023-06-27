@@ -8,6 +8,7 @@ import {
   sumCoinsToAmount,
   generateExactPayableAmountFromWallet,
   countCoins,
+  handleNotification
 } from '../utils';
 import {
   coinTypes,
@@ -114,25 +115,6 @@ function GamePlay() {
     return { nextCoins, nextAmount }
   };
 
-  const handleNotification = (type, millisecond, title, ttl) => {
-    const timeString = `${millisecond > 0 ? '+' : ''}${millisecond / 1000} s`;
-    return () => {
-      switch (type) {
-        case 'info':
-          NotificationManager.info(timeString, title, ttl);
-          break;
-        case 'success':
-          NotificationManager.success(timeString, title, ttl);
-          break;
-        case 'warning':
-          NotificationManager.warning(timeString, title, ttl);
-          break;
-        case 'error':
-          NotificationManager.error(timeString, title, ttl);
-          break;
-      }
-    };
-  };
 
   const handlePaymentResult = (returnCoins) => {
     let isGreatPayment = true;
@@ -156,7 +138,7 @@ function GamePlay() {
     const isPerfectPayment = sumCoinsToAmount(returnCoins) === 0;
 
     let type = null;
-    let ttl = 15000;
+    let ttl = 800;
 
     if (isMissedPayment) {
       type = 'missed';

@@ -54,3 +54,24 @@ export function generateExactPayableAmountFromWallet(coins) {
   }
   return price
 }
+
+
+export const handleNotification = (type, millisecond, title, ttl) => {
+    const timeString = `${millisecond > 0 ? '+' : ''}${millisecond / 1000} s`;
+    return () => {
+      switch (type) {
+        case 'info':
+          NotificationManager.info(timeString, title, ttl);
+          break;
+        case 'success':
+          NotificationManager.success(timeString, title, ttl);
+          break;
+        case 'warning':
+          NotificationManager.warning(timeString, title, ttl);
+          break;
+        case 'error':
+          NotificationManager.error(timeString, title, ttl);
+          break;
+      }
+    };
+  };
