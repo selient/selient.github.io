@@ -17,14 +17,12 @@ function GameEnd() {
   return (
     <div className={styles.main}>
       <h1>GG!</h1>
-      <p>
-        Score: {score}
-      </p>
-      <p>
-        Max Combo: {maxCombo}
-      </p>
+      <p>Score: {score}</p>
+      <p>Max Combo: {maxCombo}</p>
 
-      <button type="button" className={styles.pageButton} onClick={handleStartClick}>Play Again</button>
+      <button type="button" className={styles.pageButton} onClick={handleStartClick}>
+        Play Again
+      </button>
     </div>
   );
 }

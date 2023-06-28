@@ -1,4 +1,6 @@
-import { sumCoinsToAmount } from '../utils';
+function sumCoinsToAmount(coins) {
+  return Object.keys(coins).reduce((acc, key) => acc + Number(key) * coins[key], 0);
+}
 
 // TODO: toggle max coin type
 const coinTypes = [1000, 500, 100, 50, 10, 5, 1];
@@ -23,7 +25,7 @@ const initialGame = {
   paymentMade: {
     time: null,
     score: null,
-    combo: null
+    combo: null,
   },
   score: 0,
   combo: 0,
@@ -45,27 +47,27 @@ const paymentResultMap = {
   excessive: {
     score: -1,
     time: -10 * 1000,
-    combo: null // set to null to reset combo
+    combo: null, // set to null to reset combo
   },
   missed: {
     score: -1,
     time: -15 * 1000,
-    combo: null // set to null to reset combo
+    combo: null, // set to null to reset combo
   },
   good: {
     score: 1,
     time: 1 * 1000,
-    combo: 1
+    combo: 1,
   },
   great: {
     score: 2,
     time: 2 * 1000,
-    combo: 1
+    combo: 1,
   },
   perfect: {
     score: 3,
     time: 15 * 1000,
-    combo: 1
+    combo: 1,
   },
 };
 
@@ -81,4 +83,5 @@ export {
   defaultCoins,
   paymentResultMap,
   initialWallet,
+  sumCoinsToAmount,
 };

@@ -8,9 +8,7 @@ import coin100 from '../../assets/images/yen/100.png';
 import coin500 from '../../assets/images/yen/500.png';
 import coin1000 from '../../assets/images/yen/1000.png';
 
-
 function CoinImage({ coin, count, callback }) {
-
   let coinImage = null;
   const coinKey = Number(coin);
   switch (coinKey) {
@@ -53,13 +51,15 @@ function CoinImage({ coin, count, callback }) {
         };
 
         return (
-          <img
-            key={`coin_${coinKey}_${index}`}
-            src={`.${imageUrl}`}
-            alt={`coin ${coinKey} ${index + 1}`}
-            style={style} // Pass the dynamically generated inline style
+          <div
+            role="button"
+            tabIndex={0}
+            key={`coin_${coinKey}_${index + 1}`}
             onClick={() => callback(coinKey)}
-          />
+            onKeyDown={() => callback(coinKey)}
+          >
+            <img style={style} src={`.${imageUrl}`} alt={`coin ${coinKey} ${index + 1}`} />
+          </div>
         );
       })}
     </div>

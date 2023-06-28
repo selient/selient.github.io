@@ -6,12 +6,11 @@ import {
   getChangeBreakdown,
   generateIntBetween,
   sumCoinsToAmount,
-  generateExactPayableAmountFromWallet,
   countCoins,
-  handleNotification
+  handleNotification,
+  generateNextPrice,
 } from '../utils';
 import {
-  coinTypes,
   initialPayment,
   initialGame,
   defaultCoins,
@@ -22,7 +21,6 @@ import CoinImage from './CoinImage';
 import styles from '../style/index.module.css';
 import 'react-notifications/lib/notifications.css';
 
-
 function GamePlay() {
   const [wallet, setWallet] = useState(initialWallet);
   const [game, setGame] = useState(initialGame);
@@ -30,7 +28,7 @@ function GamePlay() {
 
   useEffect(() => {
     if (game.timeLeft <= 0) {
-      NotificationManager.removeAll()
+      NotificationManager.removeAll();
       navigate('/end', { state: { game } });
     }
   }, [game, navigate]);
@@ -108,13 +106,12 @@ function GamePlay() {
     const added = Math.floor((5000 - amount) / 1000);
     const nextCoins = {
       ...coins,
-      [1000]: coins[1000] + added
+      1000: coins[1000] + added,
     };
     const nextAmount = sumCoinsToAmount(nextCoins);
 
-    return { nextCoins, nextAmount }
+    return { nextCoins, nextAmount };
   };
-
 
   const handlePaymentResult = (returnCoins) => {
     let isGreatPayment = true;
@@ -126,19 +123,20 @@ function GamePlay() {
       }
       return {
         ...acc,
-        [denomination]: wallet.coins[denomination] + returnCoins[denomination]
-      }
+        [denomination]: wallet.coins[denomination] + returnCoins[denomination],
+      };
     }, {});
 
     const isOverCoinPayment = countCoins(nextCoins) > game.walletSize;
 
-    const isMissedPayment = !!Object.keys(returnCoins)
-      .find((key) => game.pendingPayment.coins[key] > 0);
+    const isMissedPayment = !!Object.keys(returnCoins).find(
+      (key) => game.pendingPayment.coins[key] > 0,
+    );
 
     const isPerfectPayment = sumCoinsToAmount(returnCoins) === 0;
 
     let type = null;
-    let ttl = 800;
+    const ttl = 800;
 
     if (isMissedPayment) {
       type = 'missed';
@@ -167,25 +165,19 @@ function GamePlay() {
   //   return g.pendingPayment.amount - g.price;
   // };
 
-  function scaleCombo(combo, max) {
-    const upper = Math.min(200 + combo * 100, max);
-    const price = generateIntBetween(upper - 100, upper);
-    return price;
-  }
-
   const handlePayment = () => {
     if (game.pendingPayment.amount < game.price) {
       return false;
     }
 
-    const returnCoins = getChangeBreakdown(coinTypes, game.price, game.pendingPayment.amount);
+    const returnCoins = getChangeBreakdown(game.price, game.pendingPayment.amount);
 
     let nextCoins = Object.keys(wallet.coins).reduce((acc, cur) => {
       const denomination = Number(cur);
       return {
         ...acc,
         [denomination]: wallet.coins[denomination] + (returnCoins[denomination] || 0),
-      }
+      };
     }, {});
 
     let nextAmount = sumCoinsToAmount(nextCoins);
@@ -203,13 +195,7 @@ function GamePlay() {
     const { score, time: timeAdjust, combo } = handlePaymentResult(returnCoins);
     const nextCombo = combo ? game.combo + combo : 0;
 
-    let nextPrice = null;
-    if (Math.random() < 0.1) {
-      nextPrice = generateExactPayableAmountFromWallet(nextCoins, wallet.amount);
-    } else {
-      nextPrice = scaleCombo(nextCombo, wallet.amount);
-    }
-
+    const nextPrice = generateNextPrice(nextCoins, nextCombo, nextAmount);
 
     setGame((prevGame) => ({
       ...prevGame,
@@ -218,12 +204,13 @@ function GamePlay() {
       score: prevGame.score + score,
       timeLeft: prevGame.timeLeft + timeAdjust,
       combo: nextCombo,
-      maxCombo: prevGame.combo + combo > prevGame.maxCombo ? prevGame.combo + combo : prevGame.maxCombo,
+      maxCombo:
+        prevGame.combo + combo > prevGame.maxCombo ? prevGame.combo + combo : prevGame.maxCombo,
       paymentMade: {
         time: timeAdjust,
         combo,
         score,
-      }
+      },
     }));
     return true;
   };
@@ -247,15 +234,11 @@ function GamePlay() {
           </div>
           <div>
             <h3>Price</h3>
-            <span>
-              {game.price}
-            </span>
+            <span>{game.price}</span>
           </div>
           <div>
             <h3>Amount</h3>
-            <span>
-              {game.pendingPayment.amount}
-            </span>
+            <span>{game.pendingPayment.amount}</span>
           </div>
           {/* <div>
             {game.maxCombo}
@@ -265,11 +248,18 @@ function GamePlay() {
         {/* <h2>Pending Payment</h2> */}
         <div className={styles.coinContainer}>
           {Object.keys(game.pendingPayment.coins).map((key) => (
-            <CoinImage coin={key} count={game.pendingPayment.coins[key]} key={key} callback={handlePaymentClick} />
+            <CoinImage
+              coin={key}
+              count={game.pendingPayment.coins[key]}
+              key={key}
+              callback={handlePaymentClick}
+            />
           ))}
         </div>
 
-        <button type="button" className={styles.payButton} onClick={handlePayment}>Pay!</button>
+        <button type="button" className={styles.payButton} onClick={handlePayment}>
+          Pay!
+        </button>
 
         {/* <h2>Wallet</h2> */}
         <div className={styles.coinContainer}>
@@ -278,9 +268,8 @@ function GamePlay() {
           ))}
         </div>
         <NotificationContainer />
-      </div >
-
-    </div >
+      </div>
+    </div>
   );
 }
 
