@@ -45,12 +45,12 @@ const defaultCoins = {
 
 const paymentResultMap = {
   excessive: {
-    score: -1,
+    score: 0,
     time: -10 * 1000,
     combo: null, // set to null to reset combo
   },
   missed: {
-    score: -1,
+    score: 0,
     time: -15 * 1000,
     combo: null, // set to null to reset combo
   },

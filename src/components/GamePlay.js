@@ -201,7 +201,7 @@ function GamePlay() {
       ...prevGame,
       price: nextPrice,
       pendingPayment: initialPayment,
-      score: prevGame.score + score,
+      score: prevGame.score + score * generateIntBetween(95, 105),
       timeLeft: prevGame.timeLeft + timeAdjust,
       combo: nextCombo,
       maxCombo:
