@@ -11,7 +11,7 @@ function GameEnd() {
   const { score, maxCombo } = game;
 
   const handleStartClick = () => {
-    navigate('/play');
+    navigate('/');
   };
 
   return (

@@ -65,7 +65,7 @@ const generateNextPrice = (coins, combo) => {
   const amount = sumCoinsToAmount(coins);
   let price;
   let perfectPrice;
-  let hardPrice;
+  // let hardPrice;
 
   const comboPrice = Math.min(200 + combo * 100, amount);
 
@@ -93,38 +93,49 @@ const generateNextPrice = (coins, combo) => {
 
   const scaledPrice = generateIntBetween(comboPrice - 100, comboPrice);
 
-  const emptyCoins = Object.keys(coins).filter((key) => coins[key] === 0);
+  // const emptyCoins = Object.keys(coins).filter((key) => coins[key] === 0);
 
-  if (emptyCoins.length > 0) {
-    const hardCoins = emptyCoins.reduce((acc, cur) => {
-      const key = Number(cur);
-      acc[key] = generateIntBetween(0, 1);
-      return acc;
-    }, {});
+  // if (emptyCoins.length > 0) {
+  //   const hardCoins = emptyCoins.reduce((acc, cur) => {
+  //     const key = Number(cur);
+  //     acc[key] = generateIntBetween(0, 1);
+  //     return acc;
+  //   }, {});
 
-    const fewCoins = Object.keys(coins).reduce((acc, cur) => {
-      const key = Number(cur);
-      acc[key] = generateIntBetween(0, 1);
-      return acc;
-    }, {});
+  //   const fewCoins = Object.keys(coins).reduce((acc, cur) => {
+  //     const key = Number(cur);
+  //     acc[key] = generateIntBetween(0, 1);
+  //     return acc;
+  //   }, {});
 
-    const totalCoins = {
-      ...fewCoins,
-      ...hardCoins,
-    };
-    hardPrice = sumCoinsToAmount(totalCoins);
-  } else {
-    hardPrice = generateIntBetween(comboPrice - 100, comboPrice);
-  }
+  //   const totalCoins = {
+  //     ...fewCoins,
+  //     ...hardCoins,
+  //   };
+  //   if (countCoins(totalCoins) > 0) {
+  //     hardPrice = sumCoinsToAmount(totalCoins);
+  //   } else {
+  //     hardPrice = generateIntBetween(comboPrice - 100, comboPrice);
+  //   }
+  // } else {
+  //   hardPrice = generateIntBetween(comboPrice - 100, comboPrice);
+  // }
 
   const probability = generateIntBetween(0, 100);
-  if (probability <= 7) {
+  if (probability <= 10) {
     price = perfectPrice;
-  } else if (probability <= 70) {
-    price = scaledPrice;
+    // } else if (probability < 80) {
   } else {
-    price = hardPrice;
+    price = scaledPrice;
   }
+  // } else {
+  //   price = hardPrice;
+  // }
+  // price = hardPrice;
+
+  // if (price === 0) {
+  //   price = generateIntBetween(100, 300);
+  // }
 
   return price;
 };

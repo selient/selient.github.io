@@ -62,6 +62,7 @@ function CoinImage({ coin, count, callback }) {
           </div>
         );
       })}
+      <div className={styles.coinCount}>{count}</div>
     </div>
   );
 }
