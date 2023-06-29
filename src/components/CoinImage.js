@@ -7,6 +7,7 @@ import coin50 from '../../assets/images/yen/50.png';
 import coin100 from '../../assets/images/yen/100.png';
 import coin500 from '../../assets/images/yen/500.png';
 import coin1000 from '../../assets/images/yen/1000.png';
+import { defaultCoins } from '../constants';
 
 function CoinImage({ coin, count, callback }) {
   let coinImage = null;
@@ -37,6 +38,9 @@ function CoinImage({ coin, count, callback }) {
       break;
   }
   const imageUrls = Array.from({ length: count }, () => coinImage);
+
+  const redCoin = defaultCoins[coinKey] < count ? `${styles.coinRed}` : '';
+
   return (
     <div className={styles.imageContainer} key={`con${coinKey}`}>
       {imageUrls.map((imageUrl, index) => {
@@ -62,7 +66,7 @@ function CoinImage({ coin, count, callback }) {
           </div>
         );
       })}
-      <div className={styles.coinCount}>{count}</div>
+      <div className={`${styles.coinCount} ${redCoin}`}>{count}</div>
     </div>
   );
 }

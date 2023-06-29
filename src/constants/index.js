@@ -46,22 +46,22 @@ const defaultCoins = {
 const paymentResultMap = {
   excessive: {
     score: 0,
-    time: -10 * 1000,
+    time: -15 * 1000,
     combo: null, // set to null to reset combo
   },
   missed: {
     score: 0,
-    time: -15 * 1000,
+    time: -20 * 1000,
     combo: null, // set to null to reset combo
   },
   good: {
     score: 1,
-    time: 1 * 1000,
+    time: 0 * 1000,
     combo: 1,
   },
   great: {
     score: 2,
-    time: 2 * 1000,
+    time: 3 * 1000,
     combo: 1,
   },
   perfect: {
